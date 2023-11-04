@@ -70,7 +70,7 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
     {
         m_ActualPlayable = playable;
 
-        var mixer = AnimationMixerPlayable.Create(graph, 1, true);
+        var mixer = AnimationMixerPlayable.Create(graph, 1);
         m_Mixer = mixer;
 
         self.SetInputCount(1);
