@@ -280,6 +280,9 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
             m_StateName = name;
             m_Clip = clip;
             m_WrapMode = wrapMode;
+
+            m_PauseTimeCount = 0;
+            m_ResumeSpeed = 0.0f;
         }
 
         public float GetTime()
@@ -508,6 +511,35 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
 
         public void InvalidateTime() { m_TimeIsUpToDate = false; }
         private bool m_TimeIsUpToDate;
+
+        int m_PauseTimeCount;
+        float m_ResumeSpeed;
+        public bool IsPauseTime => m_PauseTimeCount > 0;
+
+        public void PauseTime()
+        {
+            if (IsPauseTime)
+            {
+                m_PauseTimeCount++;
+                return;
+            }
+
+            m_ResumeSpeed = speed;
+            speed = 0.0f;
+            m_PauseTimeCount++;
+        }
+
+        public void ResumePauseTime()
+        {
+            if (m_PauseTimeCount <= 0) return;
+
+            m_PauseTimeCount--;
+            if (m_PauseTimeCount <= 0)
+            {
+                speed = m_ResumeSpeed;
+            }
+        }
+
     }
 
     private StateHandle StateInfoToHandle(StateInfo info)

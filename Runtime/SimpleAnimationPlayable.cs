@@ -161,13 +161,18 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
         return m_States.RemoveClip(clip);
     }
 
-    public bool Play(string name)
+    public bool Play(string name, bool pause = false)
     {
         StateInfo state = m_States.FindState(name);
         if (state == null)
         {
             Debug.LogError(string.Format("Cannot play state with name {0} because there is no state with that name", name));
             return false;
+        }
+
+        if (pause)
+        {
+            state.PauseTime();
         }
 
         return Play(state.index);
@@ -190,6 +195,27 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
         }
 
         return true;
+    }
+
+    public bool IsPauseTime(string name)
+    {
+        StateInfo state = m_States.FindState(name);
+        if (state == null) return false;
+        return state.IsPauseTime;
+    }
+
+    public void PauseTime(string name)
+    {
+        StateInfo state = m_States.FindState(name);
+        if (state == null) return;
+        state.PauseTime();
+    }
+
+    public void ResumePauseTime(string name)
+    {
+        StateInfo state = m_States.FindState(name);
+        if (state == null) return;
+        state.ResumePauseTime();
     }
 
     public bool PlayQueued(string name, QueueMode queueMode)

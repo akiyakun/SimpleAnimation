@@ -60,7 +60,7 @@ public partial class SimpleAnimation: MonoBehaviour
         {
             LegacyClipCheck(value);
             m_Clip = value;
-        }  
+        }
     }
 
     public WrapMode wrapMode
@@ -140,7 +140,7 @@ public partial class SimpleAnimation: MonoBehaviour
         {
             RebuildStates();
         }
-        
+
     }
 
     public void RemoveState(string name)
@@ -151,11 +151,11 @@ public partial class SimpleAnimation: MonoBehaviour
         }
     }
 
-    public bool Play(string stateName)
+    public bool Play(string stateName, bool pause = false)
     {
         m_Animator.enabled = true;
         Kick();
-        return m_Playable.Play(stateName);
+        return m_Playable.Play(stateName, pause);
     }
 
     public void PlayQueued(string stateName, QueueMode queueMode)
@@ -163,6 +163,21 @@ public partial class SimpleAnimation: MonoBehaviour
         m_Animator.enabled = true;
         Kick();
         m_Playable.PlayQueued(stateName, queueMode);
+    }
+
+    public bool IsPauseTime(string name)
+    {
+        return m_Playable.IsPauseTime(name);
+    }
+
+    public void Pause(string stateName)
+    {
+        m_Playable.PauseTime(stateName);
+    }
+
+    public void Resume(string stateName)
+    {
+        m_Playable.ResumePauseTime(stateName);
     }
 
     public void RemoveClip(AnimationClip clip)
@@ -174,7 +189,7 @@ public partial class SimpleAnimation: MonoBehaviour
         {
             RebuildStates();
         }
-       
+
     }
 
     public void Rewind()
