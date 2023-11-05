@@ -14,3 +14,7 @@ public void Resume(string stateName)
 Add a pause parameter to the Play method.
 `Play(string stateName, bool pause = false)`
 
+
+Add IsInitialized property.
+`public bool IsInitialized`
+
