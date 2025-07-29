@@ -22,8 +22,8 @@ public class BaseConditionsTests
 
         yield return null;
         yield return null;
-        Assert.AreEqual(0f, rb.velocity.x);
-        Assert.AreEqual(0f, rb.velocity.z);
+        Assert.AreEqual(0f, rb.linearVelocity.x);
+        Assert.AreEqual(0f, rb.linearVelocity.z);
 
 	}
 

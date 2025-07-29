@@ -215,7 +215,7 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
             return;
 
         m_Animator = GetComponent<Animator>();
-        m_Animator.updateMode = m_AnimatePhysics ? AnimatorUpdateMode.AnimatePhysics : AnimatorUpdateMode.Normal;
+        m_Animator.updateMode = m_AnimatePhysics ? AnimatorUpdateMode.Fixed : AnimatorUpdateMode.Normal;
         m_Animator.cullingMode = m_CullingMode;
         m_Graph = PlayableGraph.Create();
         m_Graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
@@ -392,7 +392,7 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
         }
 
         m_Animator = GetComponent<Animator>();
-        m_Animator.updateMode = m_AnimatePhysics ? AnimatorUpdateMode.AnimatePhysics : AnimatorUpdateMode.Normal;
+        m_Animator.updateMode = m_AnimatePhysics ? AnimatorUpdateMode.Fixed : AnimatorUpdateMode.Normal;
         m_Animator.cullingMode = m_CullingMode;
     }
 

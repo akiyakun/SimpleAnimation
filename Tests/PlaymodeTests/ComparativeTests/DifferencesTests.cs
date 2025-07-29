@@ -184,6 +184,6 @@ public class DifferencesTests
 
         yield return null;
         yield return new WaitForSeconds(0.3f);
-        Assert.AreNotEqual(rb.velocity, Vector3.zero);
+        Assert.AreNotEqual(rb.linearVelocity, Vector3.zero);
     }
 }
