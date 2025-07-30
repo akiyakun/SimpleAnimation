@@ -8,9 +8,10 @@ using UnityEngine;
 using UnityEngine.Playables;
 
 [RequireComponent(typeof(Animator))]
-public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
+public partial class SimpleAnimation : MonoBehaviour, IAnimationClipSource
 {
-    const string kDefaultStateName = "Default";
+    protected virtual string kDefaultStateName => "Default";
+
     private class StateEnumerable : IEnumerable<State>
     {
         private SimpleAnimation m_Owner;
@@ -93,20 +94,29 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
         float State.time
         {
             get { return m_StateHandle.time; }
-            set { m_StateHandle.time = value;
-                m_Component.Kick(); }
+            set
+            {
+                m_StateHandle.time = value;
+                m_Component.Kick();
+            }
         }
         float State.normalizedTime
         {
             get { return m_StateHandle.normalizedTime; }
-            set { m_StateHandle.normalizedTime = value;
-                  m_Component.Kick();}
+            set
+            {
+                m_StateHandle.normalizedTime = value;
+                m_Component.Kick();
+            }
         }
         float State.speed
         {
             get { return m_StateHandle.speed; }
-            set { m_StateHandle.speed = value;
-                  m_Component.Kick();}
+            set
+            {
+                m_StateHandle.speed = value;
+                m_Component.Kick();
+            }
         }
 
         string State.name
@@ -117,8 +127,11 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
         float State.weight
         {
             get { return m_StateHandle.weight; }
-            set { m_StateHandle.weight = value;
-                m_Component.Kick();}
+            set
+            {
+                m_StateHandle.weight = value;
+                m_Component.Kick();
+            }
         }
         float State.length
         {
@@ -143,6 +156,17 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
         public AnimationClip clip;
         public string name;
         public bool defaultState;
+
+        public bool readOnly;
+
+        public EditorState()
+        {
+            clip = null;
+            name = string.Empty;
+            defaultState = false;
+
+            readOnly = false;
+        }
     }
 
     protected void Kick()
@@ -179,7 +203,8 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
     protected AnimationClip m_Clip;
 
     [SerializeField]
-    private EditorState[] m_States;
+    // private EditorState[] m_States;
+    private List<EditorState> m_States = new();
 
     protected virtual void OnEnable()
     {
@@ -209,7 +234,7 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
         m_Initialized = false;
     }
 
-    private void Initialize()
+    protected void Initialize()
     {
         if (m_Initialized)
             return;
@@ -224,12 +249,10 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
         var playable = ScriptPlayable<SimpleAnimationPlayable>.Create(m_Graph, template, 1);
         m_Playable = playable.GetBehaviour();
         m_Playable.onDone += OnPlayableDone;
-        if (m_States == null)
+
+        if (m_States.Count == 0)
         {
-            m_States = new EditorState[1];
-            m_States[0] = new EditorState();
-            m_States[0].defaultState = true;
-            m_States[0].name = "Default";
+            m_States.Add(CreateDefaultEditorState());
         }
 
 
@@ -256,7 +279,7 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
 
     private void EnsureDefaultStateExists()
     {
-        if ( m_Playable != null && m_Clip != null && m_Playable.GetState(kDefaultStateName) == null )
+        if (m_Playable != null && m_Clip != null && m_Playable.GetState(kDefaultStateName) == null)
         {
             m_Playable.AddClip(m_Clip, kDefaultStateName);
             Kick();
@@ -293,15 +316,16 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
             newState.name = state.name;
             list.Add(newState);
         }
-        m_States = list.ToArray();
+        m_States = list;
     }
 
     EditorState CreateDefaultEditorState()
     {
         var defaultState = new EditorState();
-        defaultState.name = "Default";
+        defaultState.name = kDefaultStateName;
         defaultState.clip = m_Clip;
         defaultState.defaultState = true;
+        defaultState.readOnly = true;
 
         return defaultState;
     }
@@ -316,10 +340,10 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
 
     void InvalidLegacyClipError(string clipName, string stateName)
     {
-        Debug.LogErrorFormat(this.gameObject,"Animation clip {0} in state {1} is Legacy. Set clip.legacy to false, or reimport as Generic to use it with SimpleAnimationComponent", clipName, stateName);
+        Debug.LogErrorFormat(this.gameObject, "Animation clip {0} in state {1} is Legacy. Set clip.legacy to false, or reimport as Generic to use it with SimpleAnimationComponent", clipName, stateName);
     }
 
-    private void OnValidate()
+    protected void OnValidate()
     {
         //Don't mess with runtime data
         if (Application.isPlaying)
@@ -327,29 +351,20 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
 
         if (m_Clip && m_Clip.legacy)
         {
-            Debug.LogErrorFormat(this.gameObject,"Animation clip {0} is Legacy. Set clip.legacy to false, or reimport as Generic to use it with SimpleAnimationComponent", m_Clip.name);
+            Debug.LogErrorFormat(this.gameObject, "Animation clip {0} is Legacy. Set clip.legacy to false, or reimport as Generic to use it with SimpleAnimationComponent", m_Clip.name);
             m_Clip = null;
         }
 
-        //Ensure at least one state exists
-        if (m_States == null || m_States.Length == 0)
+        if (m_States.Count == 0)
         {
-            m_States = new EditorState[1];
+            m_States.Add(CreateDefaultEditorState());
         }
 
-        //Create default state if it's null
-        if (m_States[0] == null)
+        // If first state is not the default state, create a new default state at index 0 and push back the rest
+        // 最初の状態がデフォルトの状態でない場合は、インデックス0に新しいデフォルトの状態を作成し、残りをプッシュバックします。
+        if (m_States[0].defaultState == false || m_States[0].name != kDefaultStateName)
         {
-            m_States[0] = CreateDefaultEditorState();
-        }
-
-        //If first state is not the default state, create a new default state at index 0 and push back the rest
-        if (m_States[0].defaultState == false || m_States[0].name != "Default")
-        {
-            var oldArray = m_States;
-            m_States = new EditorState[oldArray.Length + 1];
-            m_States[0] = CreateDefaultEditorState();
-            oldArray.CopyTo(m_States, 1);
+            m_States.Insert(0, CreateDefaultEditorState());
         }
 
         //If default clip changed, update the default state
@@ -358,7 +373,7 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
 
 
         //Make sure only one state is default
-        for (int i = 1; i < m_States.Length; i++)
+        for (int i = 1; i < m_States.Count; i++)
         {
             if (m_States[i] == null)
             {
@@ -368,7 +383,7 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
         }
 
         //Ensure state names are unique
-        int stateCount = m_States.Length;
+        int stateCount = m_States.Count;
         string[] names = new string[stateCount];
 
         for (int i = 0; i < stateCount; i++)
@@ -404,4 +419,31 @@ public partial class SimpleAnimation: MonoBehaviour, IAnimationClipSource
                 results.Add(state.clip);
         }
     }
+
+    public bool HasState(string name)
+    {
+        foreach (var state in m_States)
+        {
+            if (state != null && state.name == name)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void AddEditorState(string name, bool readOnly = false, bool unique = false)
+    {
+        // nameの重複を許さないとき
+        if (unique == true && HasState(name) == true) return;
+
+        var state = new EditorState();
+        state.name = name;
+        // state.defaultState = defaultState;
+        state.readOnly = readOnly;
+        m_States.Add(state);
+
+        OnValidate();
+    }
+
 }

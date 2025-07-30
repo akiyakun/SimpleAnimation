@@ -15,6 +15,9 @@ Add a pause parameter to the Play method.
 `Play(string stateName, bool pause = false)`
 
 
-Add IsInitialized property.
-`public bool IsInitialized`
+Add initialized property.
+`public bool initialized`
+
+Change the Initialize method to be protected.
+`protected void Initialize()`
 
