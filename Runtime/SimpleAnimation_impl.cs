@@ -208,11 +208,11 @@ public partial class SimpleAnimation : MonoBehaviour, IAnimationClipSource
 
     protected virtual void OnEnable()
     {
-        Initialize();
+        InnerInitialize();
         m_Graph.Play();
         if (m_PlayAutomatically)
         {
-            Stop();
+            StopAll();
             Play();
         }
     }
@@ -221,7 +221,7 @@ public partial class SimpleAnimation : MonoBehaviour, IAnimationClipSource
     {
         if (m_Initialized)
         {
-            Stop();
+            StopAll();
             m_Graph.Stop();
         }
     }
@@ -234,7 +234,7 @@ public partial class SimpleAnimation : MonoBehaviour, IAnimationClipSource
         m_Initialized = false;
     }
 
-    protected void Initialize()
+    protected void InnerInitialize()
     {
         if (m_Initialized)
             return;
@@ -288,7 +288,7 @@ public partial class SimpleAnimation : MonoBehaviour, IAnimationClipSource
 
     protected virtual void Awake()
     {
-        Initialize();
+        InnerInitialize();
     }
 
     protected void OnDestroy()
@@ -343,7 +343,7 @@ public partial class SimpleAnimation : MonoBehaviour, IAnimationClipSource
         Debug.LogErrorFormat(this.gameObject, "Animation clip {0} in state {1} is Legacy. Set clip.legacy to false, or reimport as Generic to use it with SimpleAnimationComponent", clipName, stateName);
     }
 
-    protected void OnValidate()
+    protected virtual void OnValidate()
     {
         //Don't mess with runtime data
         if (Application.isPlaying)

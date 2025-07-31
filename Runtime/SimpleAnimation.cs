@@ -107,7 +107,7 @@ public partial class SimpleAnimation: MonoBehaviour
         return m_Playable.IsPlaying(stateName);
     }
 
-    public void Stop()
+    public void StopAll()
     {
         m_Playable.StopAll();
     }
@@ -166,17 +166,17 @@ public partial class SimpleAnimation: MonoBehaviour
         m_Playable.PlayQueued(stateName, queueMode);
     }
 
-    public bool IsPauseTime(string name)
+    public bool IsPauseTime(string stateName)
     {
-        return m_Playable.IsPauseTime(name);
+        return m_Playable.IsPauseTime(stateName);
     }
 
-    public void Pause(string stateName)
+    public void PauseTime(string stateName)
     {
         m_Playable.PauseTime(stateName);
     }
 
-    public void Resume(string stateName)
+    public void ResumePauseTime(string stateName)
     {
         m_Playable.ResumePauseTime(stateName);
     }

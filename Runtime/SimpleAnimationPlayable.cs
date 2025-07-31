@@ -161,6 +161,14 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
         return m_States.RemoveClip(clip);
     }
 
+    bool InnerPlay(StateInfo state)
+    {
+        Debug.Assert(state != null);
+        state.Enable();
+        state.ForceWeight(1.0f);
+        return true;
+    }
+
     public bool Play(string name, bool pause = false)
     {
         StateInfo state = m_States.FindState(name);
@@ -170,32 +178,36 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
             return false;
         }
 
+        if (state.clip == null)
+        {
+            return false;
+        }
+
         if (pause)
         {
             state.PauseTime();
         }
 
-        return Play(state.index);
+        return InnerPlay(state);
     }
 
-    private bool Play(int index)
-    {
-        for (int i = 0; i < m_States.Count; i++)
-        {
-            StateInfo state = m_States[i];
-            if (state.index == index)
-            {
-                state.Enable();
-                state.ForceWeight(1.0f);
-            }
-            else
-            {
-                DoStop(i);
-            }
-        }
-
-        return true;
-    }
+    // private bool Play(int index)
+    // {
+    //     for (int i = 0; i < m_States.Count; i++)
+    //     {
+    //         StateInfo state = m_States[i];
+    //         if (state.index == index)
+    //         {
+    //             state.Enable();
+    //             state.ForceWeight(1.0f);
+    //         }
+    //         else
+    //         {
+    //             DoStop(i);
+    //         }
+    //     }
+    //     return true;
+    // }
 
     public bool IsPauseTime(string name)
     {
@@ -236,7 +248,7 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
 
         if (queueMode == QueueMode.PlayNow)
         {
-            Play(newState.index);
+            InnerPlay(newState);
             return true;
         }
 
@@ -426,7 +438,7 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
         }
 
         if (time == 0f)
-            return Play(state.index);
+            return InnerPlay(state);
 
         return Crossfade(state.index, time);
     }

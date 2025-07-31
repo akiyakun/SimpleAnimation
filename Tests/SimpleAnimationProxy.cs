@@ -165,7 +165,7 @@ public class SimpleAnimationProxy : MonoBehaviour, IAnimation
 
     public void Stop()
     {
-        impl.Stop();
+        impl.StopAll();
     }
 
     public void Stop(string stateName)
