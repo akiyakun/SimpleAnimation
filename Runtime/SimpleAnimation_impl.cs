@@ -204,7 +204,11 @@ public partial class SimpleAnimation : MonoBehaviour, IAnimationClipSource
 
     [SerializeField]
     // private EditorState[] m_States;
-    private List<EditorState> m_States = new();
+    protected List<EditorState> m_States = new();
+
+
+    protected DirectorUpdateMode m_DirectorUpdateMode = DirectorUpdateMode.GameTime;
+
 
     protected virtual void OnEnable()
     {
@@ -243,7 +247,7 @@ public partial class SimpleAnimation : MonoBehaviour, IAnimationClipSource
         m_Animator.updateMode = m_AnimatePhysics ? AnimatorUpdateMode.Fixed : AnimatorUpdateMode.Normal;
         m_Animator.cullingMode = m_CullingMode;
         m_Graph = PlayableGraph.Create();
-        m_Graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
+        m_Graph.SetTimeUpdateMode(m_DirectorUpdateMode);
         SimpleAnimationPlayable template = new SimpleAnimationPlayable();
 
         var playable = ScriptPlayable<SimpleAnimationPlayable>.Create(m_Graph, template, 1);
@@ -432,18 +436,17 @@ public partial class SimpleAnimation : MonoBehaviour, IAnimationClipSource
         return false;
     }
 
-    public void AddEditorState(string name, bool readOnly = false, bool unique = false)
+    public AnimationClip GetStateClip(string name)
     {
-        // nameの重複を許さないとき
-        if (unique == true && HasState(name) == true) return;
-
-        var state = new EditorState();
-        state.name = name;
-        // state.defaultState = defaultState;
-        state.readOnly = readOnly;
-        m_States.Add(state);
-
-        OnValidate();
+        foreach (var state in m_States)
+        {
+            if (state != null && state.name == name)
+            {
+                return state.clip;
+            }
+        }
+        return null;
     }
+
 
 }
