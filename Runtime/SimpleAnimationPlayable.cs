@@ -133,6 +133,12 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
             return false;
         }
 
+        // nullを許容する
+        if (clip == null)
+        {
+            return false;
+        }
+
         DoAddClip(name, clip);
         UpdateDoneStatus();
         InvalidateStates();
@@ -174,7 +180,7 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
         StateInfo state = m_States.FindState(name);
         if (state == null)
         {
-            Debug.LogError(string.Format("Cannot play state with name {0} because there is no state with that name", name));
+            // Debug.LogError(string.Format("Cannot play state with name {0} because there is no state with that name", name));
             return false;
         }
 

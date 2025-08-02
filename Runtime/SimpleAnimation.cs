@@ -42,7 +42,7 @@ public partial class SimpleAnimation: MonoBehaviour
     public AnimatorCullingMode cullingMode
     {
         get { return animator.cullingMode; }
-        set { m_CullingMode = value;  animator.cullingMode = m_CullingMode; }
+        set { m_CullingMode = value; animator.cullingMode = m_CullingMode; }
     }
 
     public bool initialized { get { return m_Initialized; } }
