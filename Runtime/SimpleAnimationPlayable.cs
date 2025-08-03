@@ -172,6 +172,16 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
         Debug.Assert(state != null);
         state.Enable();
         state.ForceWeight(1.0f);
+
+        // MEMO: 元の実装がDoStop()を呼ぶ仕様のため
+        for (int i = 0; i < m_States.Count; i++)
+        {
+            if (m_States[i] != state)
+            {
+                DoStop(i);
+            }
+        }
+
         return true;
     }
 
@@ -180,7 +190,7 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
         StateInfo state = m_States.FindState(name);
         if (state == null)
         {
-            // Debug.LogError(string.Format("Cannot play state with name {0} because there is no state with that name", name));
+            Debug.LogError(string.Format("Cannot play state with name {0} because there is no state with that name", name));
             return false;
         }
 
