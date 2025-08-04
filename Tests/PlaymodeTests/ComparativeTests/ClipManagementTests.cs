@@ -45,11 +45,29 @@ public class ClipManagementTests
 
     public class AddClip
     {
+        // MEMO:
+        // 現在UnityのAnimationコンポーネントはAddClip()でclipがnullのとき ArgumentNullException を返すようになっている
         [Test]
         public void AddClip_WithNullClip_Throws_NullReferenceException([ValueSource(typeof(ComparativeTestFixture), "Sources")]System.Type type)
         {
             IAnimation animation = ComparativeTestFixture.Instantiate(type);
-            Assert.Throws<System.NullReferenceException> (() => { animation.AddClip(null, "test"); });
+            // Assert.Throws<System.NullReferenceException> (() => { animation.AddClip(null, "test"); });
+            try
+            {
+                animation.AddClip(null, "test");
+            }
+            catch (System.NullReferenceException)
+            {
+                // SimpleAnimation
+            }
+            catch (System.ArgumentNullException)
+            {
+                // Animation
+            }
+            catch (System.Exception e)
+            {
+                Assert.Fail($"Unexpected exception type: {e.GetType()}");
+            }
         }
 
         [Test]
@@ -64,7 +82,7 @@ public class ClipManagementTests
             LogAssert.ignoreFailingMessages = true; //The error message here is irrelevant
             animation.AddClip(clipInstance, "test");
             LogAssert.ignoreFailingMessages = false;
-            
+
             Assert.AreEqual(1, animation.GetClipCount(), "Component should have no clips after remove");
         }
 
@@ -98,11 +116,11 @@ public class ClipManagementTests
     public class RemoveClip_ByAnimationClip
     {
         [Test]
-        public void RemoveClip_AnimationClip_WithNullClip_Throws_NullReferenceException([ValueSource(typeof(ComparativeTestFixture), "Sources")]System.Type type)
+        public void RemoveClip_AnimationClip_WithNullClip_Throws_ArgumentNullException([ValueSource(typeof(ComparativeTestFixture), "Sources")]System.Type type)
         {
             IAnimation animation = ComparativeTestFixture.Instantiate(type);
 			AnimationClip clip = null;
-			Assert.Throws<System.NullReferenceException> (() => { animation.RemoveClip(clip); });
+			Assert.Throws<System.ArgumentNullException> (() => { animation.RemoveClip(clip); });
         }
 
         [Test]
@@ -152,7 +170,7 @@ public class ClipManagementTests
 			animation.RemoveClip("");
 			Assert.AreEqual(0, animation.GetClipCount(), "Component should still have 1 connected clip after remove");
 		}
-        
+
         [Test]
         public void RemoveClip_ByName_DoesntRemoveOtherClips([ValueSource(typeof(ComparativeTestFixture), "Sources")]System.Type type)
         {

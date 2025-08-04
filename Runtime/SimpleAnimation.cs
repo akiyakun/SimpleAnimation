@@ -184,7 +184,7 @@ public partial class SimpleAnimation: MonoBehaviour
     public void RemoveClip(AnimationClip clip)
     {
         if (clip == null)
-            throw new System.NullReferenceException("clip");
+            throw new System.ArgumentNullException("clip");
 
         if ( m_Playable.RemoveClip(clip) )
         {

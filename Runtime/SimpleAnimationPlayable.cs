@@ -133,11 +133,11 @@ public partial class SimpleAnimationPlayable : PlayableBehaviour
             return false;
         }
 
-        // nullを許容する
-        if (clip == null)
-        {
-            return false;
-        }
+        // // nullを許容する
+        // if (clip == null)
+        // {
+        //     return false;
+        // }
 
         DoAddClip(name, clip);
         UpdateDoneStatus();
