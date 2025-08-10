@@ -3,6 +3,9 @@
 This is a sample that shows how to use Playable Graphs to animate objects in a manner similar to the Animation Component. 
 
 # Changes
+Use testing symbol
+__SIMPLEANIMATION_INCLUDE_TESTS__
+
 ## SimpleAnimation class
 Add pause and resume methods.
 ```cs

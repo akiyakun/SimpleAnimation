@@ -1,16 +1,23 @@
 {
     "name": "SimpleAnimation-Tests",
+    "rootNamespace": "",
     "references": [
-        "SimpleAnimationComponent"
-    ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+        "SimpleAnimationComponent",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": []
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "__SIMPLEANIMATION_INCLUDE_TESTS__"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
